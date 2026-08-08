@@ -1,0 +1,31 @@
+{
+  "name": "Moli-SDK",
+  "version": "0.1.0",
+  "description": "Modern C++23 Zero-Cost Embedded Driver SDK for STM32 and Cross-Platform MCUs.",
+  "keywords": [
+    "driver",
+    "cpp23",
+    "stm32",
+    "motor",
+    "encoder",
+    "hal"
+  ],
+  "authors": {
+    "name": "Molirain",
+    "url": "https://github.com/Molirain"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Molirain/moli_sdk.git"
+  },
+  "frameworks": "*",
+  "platforms": "*",
+  "headers": [
+    "moli/moli_target.hpp"
+  ],
+  "build": {
+    "flags": [
+      "-std=gnu++23"
+    ]
+  }
+}

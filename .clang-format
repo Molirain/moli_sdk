@@ -1,0 +1,12 @@
+﻿BasedOnStyle: LLVM
+Language: Cpp
+
+# 设置基础缩进为 4 个空格
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+
+# 针对 C++20 Concept 与大括号内的缩进设置
+BracedInitializerIndentWidth: 4
+
+IndentPPDirectives: BeforeHash
