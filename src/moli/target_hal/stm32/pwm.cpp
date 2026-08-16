@@ -41,5 +41,6 @@ float Pwm::get_duty() const {
     uint32_t arr = __HAL_TIM_GET_AUTORELOAD(htim_);
     uint32_t ccr = __HAL_TIM_GET_COMPARE(htim_, ch_);
     return static_cast<float>(ccr) / static_cast<float>(arr);
+}
 
 } // namespace moli::port::stm32

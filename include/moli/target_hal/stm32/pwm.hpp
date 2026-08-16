@@ -1,10 +1,6 @@
 #pragma once
 #include <cstdint>
 
-// 前向声明，避免引入庞大的 stm32h7xx_hal.h
-struct __TIM_HandleTypeDef;
-using TIM_HandleTypeDef = struct __TIM_HandleTypeDef;
-
 namespace moli::port::stm32 {
 
 class Pwm {
