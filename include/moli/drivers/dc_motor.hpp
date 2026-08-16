@@ -7,12 +7,12 @@
 namespace moli::drivers {
 
 // 两个模板参数：
-// 1. PwmHw: 遵循 DualPwmHardware 规范的硬件类
+// 1. PwmHw: 遵循 PwmHardware 规范的单通道硬件类
 // 2. T: 浮点精度类型（默认为 float，也可以指定为 double）
-template <hal::DualPwmHardware PwmHw, std::floating_point T = float>
-class DCMotor {
+template <hal::PwmHardware PwmHw, std::floating_point T = float> class DCMotor {
   private:
-    PwmHw hw_;
+    PwmHw pwm_a_;
+    PwmHw pwm_b_;
     T deadband_;
     T *trim_;
     bool should_trim_;
@@ -29,12 +29,15 @@ class DCMotor {
     }
 
   public:
-    DCMotor(PwmHw hw, T deadband = static_cast<T>(15.0), T *trim = nullptr,
-            bool should_trim = false)
-        : hw_(hw), deadband_(deadband), trim_(trim), should_trim_(should_trim) {
-    }
+    DCMotor(PwmHw pwm_a, PwmHw pwm_b, T deadband = static_cast<T>(15.0),
+            T *trim = nullptr, bool should_trim = false)
+        : pwm_a_(pwm_a), pwm_b_(pwm_b), deadband_(deadband), trim_(trim),
+          should_trim_(should_trim) {}
 
-    void begin() { hw_.begin(); }
+    void begin() {
+        pwm_a_.begin();
+        pwm_b_.begin();
+    }
 
     void setSpeed(T speed) {
         // 1. 根据当前精度做限幅
@@ -42,7 +45,8 @@ class DCMotor {
             std::clamp(speed, static_cast<T>(-100.0), static_cast<T>(100.0));
 
         if (speed == static_cast<T>(0)) {
-            hw_.set_duty(0.0f, 0.0f);
+            pwm_a_.set_duty(0.0f);
+            pwm_b_.set_duty(0.0f);
             return;
         }
 
@@ -58,9 +62,11 @@ class DCMotor {
         float duty = static_cast<float>(var / static_cast<T>(100.0));
 
         if (speed > static_cast<T>(0)) {
-            hw_.set_duty(duty, 0.0f);
+            pwm_a_.set_duty(duty);
+            pwm_b_.set_duty(0.0f);
         } else {
-            hw_.set_duty(0.0f, duty);
+            pwm_a_.set_duty(0.0f);
+            pwm_b_.set_duty(duty);
         }
     }
 };

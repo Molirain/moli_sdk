@@ -9,15 +9,15 @@ namespace moli::port::stm32 {
 
 class Pwm {
   public:
-    Pwm(TIM_HandleTypeDef *htim, uint32_t ch1, uint32_t ch2);
+    Pwm(TIM_HandleTypeDef *htim, uint32_t ch);
 
     void begin();
-    void set_duty(float duty1, float duty2);
+    void set_duty(float duty);
+    float get_duty() const;
 
   private:
     TIM_HandleTypeDef *htim_;
-    uint32_t ch1_;
-    uint32_t ch2_;
+    uint32_t ch_;
 };
 
 } // namespace moli::port::stm32
