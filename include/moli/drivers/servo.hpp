@@ -1,30 +1,37 @@
 ﻿#pragma once
+#include <algorithm>
 #include <moli/hal/pwm.hpp>
 
 namespace moli::drivers {
+
+// 通用 50Hz 舵机驱动
+// 角度范围: -135° ~ +135°，居中 0° 对应 1.5ms 脉宽
+// 占空比范围: 2.5% (0.5ms) ~ 12.5% (2.5ms)
 template <hal::PwmHardware PwmHw> class Servo {
   public:
-    Servo(PwmHw pwm) : pwm_(pwm) {}
-    void begin();
-    void setAngle(float angle);
-    float getAngle() const;
+    explicit Servo(PwmHw pwm) : pwm_(pwm) {}
+
+    void begin() { pwm_.begin(); }
+
+    void setAngle(float angle) {
+        angle_ = std::clamp(angle, -135.0f, 135.0f);
+        pwm_.set_duty(angleToDuty(angle_));
+    }
+
+    float getAngle() const { return angle_; }
+
+    void center() { setAngle(0.0f); }
 
   private:
     PwmHw pwm_;
+    float angle_ = 0.0f;
+
+    static float angleToDuty(float angle) {
+        // us = 1500 + angle * (1000 / 135)
+        float us = 1500.0f + angle * (1000.0f / 135.0f);
+        // duty = us / 20000
+        return us / 20000.0f;
+    }
 };
 
-// 以下为实现
-template <hal::PwmHardware PwmHw> void Servo<PwmHw>::begin() { pwm_.begin(); }
-
-template <hal::PwmHardware PwmHw> void Servo<PwmHw>::setAngle(float angle) {
-    // 将角度映射到占空比范围
-    float duty = (angle / 180.0f) * (1.0f - 0.05f) + 0.05f; // 5% ~ 95%
-    pwm_.set_duty(duty);
-}
-
-template <hal::PwmHardware PwmHw> float Servo<PwmHw>::getAngle() const {
-    // 将占空比映射到角度范围
-    float duty = pwm_.get_duty();
-    return (duty - 0.05f) / (1.0f - 0.05f) * 180.0f;
-}
 } // namespace moli::drivers
