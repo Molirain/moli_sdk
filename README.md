@@ -159,6 +159,38 @@ motor.motor().target = 1.0f;   // 目标角 1 rad
 // motor.motor().target = 2.0f;   // 目标电压 2V
 ```
 
+### 角度环（0~360° 位置伺服）
+
+`BLDC` 内置了角度环封装，直接用「度」控制，自动归一化并走最短路径：
+
+```cpp
+// 把上电位置标定为 0°
+motor.setZero();
+
+// 转到任意角度（单位：度，自动最短路径）
+motor.setAngle(90.0f);    // 转到 90°
+motor.setAngle(350.0f);   // 从 90° 正转 260° 到 350°（不会反转 340°）
+
+// 读取当前角度（度，[0, 360)）
+float angle = motor.getAngle();
+
+// 调参
+motor.setAngleP(20.0f);            // 角度环 P 增益（越大越"硬"，过大易振荡）
+motor.setVelocityLimit(20.0f);     // 角度环输出的最大角速度 [rad/s]
+```
+
+对应的方法一览：
+
+| 方法 | 说明 |
+|------|------|
+| `setAngle(float deg)` | 设置目标角（度），自动归一化 `[0,360)` + 最短路径 + 切到角度环 |
+| `getAngle()` | 当前机械角（度），归一化到 `[0,360)` |
+| `setZero()` | 将当前位置标定为 0° |
+| `setAngleP(float p)` | 角度环 P 增益 |
+| `setVelocityLimit(float rad_s)` | 角度环输出速度限幅 |
+
+> 注意：`setAngle()` 依赖 `initFOC()` 已完成，请按「实例化 → 初始化 → 控制」的顺序调用。
+
 ### 运行循环
 
 SimpleFOC 的标准双环结构：`loopFOC()` 是**电流环**（需高频调用，1~20kHz），`move()` 是**运动控制环**（可低频，如 1kHz）。
@@ -219,7 +251,10 @@ motor.motor().velocity_limit = 20.0f;   // 角速度限幅 [rad/s]
 #include <moli/drivers/foc/as5600.hpp>
 
 using Encoder = moli::drivers::foc::As5600<CurrentMcuI2c>;
-Encoder encoder(CurrentMcuI2c(&hi2c1));
+
+// I2c 是 RAII 总线资源（不可拷贝），需作为持久对象；encoder 持有其引用
+CurrentMcuI2c i2c(&hi2c1);
+Encoder encoder(i2c);
 
 encoder.init();
 float angle = encoder.getAngle();   // 机械角（含多圈累计），单位 rad

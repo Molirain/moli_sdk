@@ -25,7 +25,8 @@
   ],
   "build": {
     "flags": [
-      "-std=gnu++23"
+      "-std=gnu++23",
+      "-I third_party/simplefoc/src"
     ],
     "extraScript": "foc_build.py"
   }

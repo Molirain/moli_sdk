@@ -17,11 +17,13 @@ inline constexpr std::uint8_t kAs5600AngleReg = 0x0C;
 inline constexpr int kAs5600BitResolution = 12;
 
 // I2cHw 满足 moli::hal::AsyncI2cHardware + WaitableI2cTransferHandle
+// 注意：I2cHw 按引用持有——I2c 是 RAII
+// 总线资源（不可拷贝），且多设备可共用一条总线。
 template <hal::AsyncI2cHardware I2cHw>
     requires hal::WaitableI2cTransferHandle<typename I2cHw::Transfer>
 class As5600 : public Sensor {
   public:
-    explicit As5600(I2cHw i2c)
+    explicit As5600(I2cHw &i2c)
         : i2c_(i2c), cpr_(_powtwo(kAs5600BitResolution)) {}
 
     // 初始化：开启 I2C 总线 + 传感器基线采样
@@ -61,7 +63,7 @@ class As5600 : public Sensor {
     }
 
   private:
-    I2cHw i2c_;
+    I2cHw &i2c_;
     float cpr_;
 };
 
