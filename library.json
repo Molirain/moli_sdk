@@ -26,6 +26,7 @@
   "build": {
     "flags": [
       "-std=gnu++23"
-    ]
+    ],
+    "extraScript": "foc_build.py"
   }
 }

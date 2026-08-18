@@ -19,11 +19,17 @@
 #endif
 
 // ----------------------------------------------------------------------------
-// PWM 端口层类型映射
+// 端口层类型映射
 // ----------------------------------------------------------------------------
 #if defined(MOLI_PLATFORM_STM32)
     #include "target_hal/stm32/pwm.hpp"
-    // STM32 全系列共用 HAL，外设 API 一致，统一映射到同一个 Pwm 类型
+    #include "target_hal/stm32/i2c.hpp"
+    #include "target_hal/stm32/spi.hpp"
+    #include "target_hal/stm32/clock.hpp"
+    // STM32 全系列共用 HAL，外设 API 一致，统一映射到同一类型
     using CurrentMcuPwm = moli::port::stm32::Pwm;
+    using CurrentMcuI2c = moli::port::stm32::I2c;
+    using CurrentMcuSpi = moli::port::stm32::Spi;
+    using CurrentMcuClock = moli::port::stm32::Clock;
 #endif
 // clang-format on
