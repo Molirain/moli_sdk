@@ -26,10 +26,14 @@
     #include "target_hal/stm32/i2c.hpp"
     #include "target_hal/stm32/spi.hpp"
     #include "target_hal/stm32/clock.hpp"
+    #include "target_hal/stm32/gpio.hpp"
+
     // STM32 全系列共用 HAL，外设 API 一致，统一映射到同一类型
     using CurrentMcuPwm = moli::port::stm32::Pwm;
     using CurrentMcuI2c = moli::port::stm32::I2c;
     using CurrentMcuSpi = moli::port::stm32::Spi;
     using CurrentMcuClock = moli::port::stm32::Clock;
+    using CurrentMcuGpio = moli::port::stm32::Gpio;
+    using CurrentMcuExtiPin = moli::port::stm32::ExtiPin;
 #endif
 // clang-format on
