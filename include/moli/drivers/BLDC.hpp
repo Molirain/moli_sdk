@@ -129,6 +129,12 @@ class BLDC {
     // 当前机械角度（度），归一化到 [0, 360)
     float getAngle() { return normalizeDeg(motor_.shaftAngle() * kRadToDeg); }
 
+    // 当前机械转速 [rad/s]
+    float getVelocity() { return motor_.shaftVelocity(); }
+
+    // 驱动器健康状态：未锁存故障时返回 true
+    bool getDriverHealth() const { return !faulted_; }
+
     // 将当前位置标定为零点（0°）。调用后 setAngle(0) 即回到该位置。
     void setZero() {
         if (motor_.sensor != nullptr) {
